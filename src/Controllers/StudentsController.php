@@ -40,7 +40,7 @@ class StudentsController
             ]
         );
     }
-    public function editAction()
+    public function editAction($id)
     {
         if (isset($_POST['first_name'])) {
             $this->repository->update(
@@ -48,12 +48,13 @@ class StudentsController
                     'first_name' => $_POST['first_name'],
                     'last_name'  => $_POST['last_name'],
                     'email'      => $_POST['email'],
-                    'id'         => (int) $_GET['id'],
+                    'id'         => (int) $id,
                 ]
             );
             return $this->indexAction();
         }
-        $studentData = $this->repository->find((int) $_GET['id']);
+        $studentData = $this->repository->find((int) $id);
+        if($studentData){
         return $this->twig->render('students_form.html.twig',
             [
                 'first_name' => $studentData['firstName'],
@@ -61,11 +62,14 @@ class StudentsController
                 'email' => $studentData['email'],
             ]
         );
+        } else {
+            return $this->indexAction();
+        }
     }
-    public function deleteAction()
+    public function deleteAction($id)
     {
-        if (isset($_POST['id'])) {
-            $id = (int) $_POST['id'];
+        if (isset($id)) {
+            $id = (int) $id;
             $this->repository->remove(['id' => $id]);
             return $this->indexAction();
         }

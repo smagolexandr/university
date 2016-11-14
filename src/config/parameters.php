@@ -1,7 +1,7 @@
 <?php
 
 $configuration = array(
-    'database' => 'gh_database',
+    'database' => 'gh',
     'user' => 'root',
     'password' => 'root'
 );

@@ -27,11 +27,11 @@
                 <td>{{ student.firstName }}</td>
                 <td>{{ student.lastName }}</td>
                 <td>{{ student.email }}</td>
-                <td><a href="index.php?controller=students&action=edit&id={{ student.id }}">edit</a> <a href="index.php?controller=students&action=delete&id={{ student.id }}">delete</a></td>
+                <td><a href="/student/edit/{{ student.id }}">edit</a> <a href="/student/delete/{{ student.id }}">delete</a></td>
             </tr>
         {% endfor %}
     </table>
-    <a href="index.php?controller=students&action=new&id={{ student.id }}">Add a new student</a>
+    <a href="/student/add">Add a new student</a>
 </div>
 </body>
 </html>
