@@ -4,4 +4,4 @@ Config:
 /src/config/parameters.php
 
 Creating tables and load fixtures:
-/db
+siteName/db
