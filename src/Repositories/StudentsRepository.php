@@ -16,7 +16,13 @@ class StudentsRepository implements RepositoryInterface
 
     public function findAll($limit = 250, $offset = 0)
     {
-        $statement = $this->connector->getPdo()->prepare('SELECT * FROM students LIMIT :limit OFFSET :offset');
+        $statement = $this->connector->getPdo()->prepare('SELECT students.*, students.id AS studentId, kafedras.id, kafedras.name AS kafedraName, universities.id, universities.name AS universityName
+                                                          FROM students 
+                                                          INNER JOIN kafedras 
+                                                          ON students.kafedra = kafedras.id
+                                                          INNER JOIN universities 
+                                                          ON universities.id = kafedras.university
+                                                          LIMIT :limit OFFSET :offset');
         $statement->bindValue(':limit', (int) $limit, \PDO::PARAM_INT);
         $statement->bindValue(':offset', (int) $offset, \PDO::PARAM_INT);
         $statement->execute();
@@ -27,10 +33,12 @@ class StudentsRepository implements RepositoryInterface
         $results = [];
         while ($result = $statement->fetch()) {
             $results[] = [
-                'id' => $result['id'],
+                'id' => $result['studentId'],
                 'firstName' => $result['first_name'],
                 'lastName' => $result['last_name'],
                 'email' => $result['email'],
+                'kafedra' => $result['kafedraName'],
+                'university' => $result['universityName']
             ];
         }
         return $results;

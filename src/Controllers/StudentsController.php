@@ -12,13 +12,13 @@ class StudentsController
         $this->repository = new StudentsRepository($connector);
         $this->loader = new \Twig_Loader_Filesystem('src/Views/Students/');
         $this->twig = new \Twig_Environment($this->loader, array(
-            'cache' => false,
+            'cache' => false, 'debug' => true
         ));
     }
     public function indexAction()
     {
         $studentsData = $this->repository->findAll();
-        return $this->twig->render('students.html.twig', ['students' => $studentsData]);
+        return $this->twig->render('show.html.twig', ['students' => $studentsData]);
     }
     public function newAction()
     {
@@ -32,7 +32,7 @@ class StudentsController
             );
             return $this->indexAction();
         }
-        return $this->twig->render('students_form.html.twig',
+        return $this->twig->render('form.html.twig',
             [
                 'first_name' => '',
                 'last_name' => '',
@@ -55,7 +55,7 @@ class StudentsController
         }
         $studentData = $this->repository->find((int) $id);
         if($studentData){
-        return $this->twig->render('students_form.html.twig',
+        return $this->twig->render('form.html.twig',
             [
                 'first_name' => $studentData['firstName'],
                 'last_name' => $studentData['lastName'],
@@ -73,6 +73,6 @@ class StudentsController
             $this->repository->remove(['id' => $id]);
             return $this->indexAction();
         }
-        return $this->twig->render('students_delete.html.twig', array('student_id' => $_GET['id']));
+        return $this->twig->render('delete.html.twig', array('student_id' => $_GET['id']));
     }
 }
