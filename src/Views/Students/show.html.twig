@@ -32,7 +32,7 @@
                 <td>{{ student.email }}</td>
                 <td>{{ student.kafedra }}</td>
                 <td>{{ student.university }}</td>
-                <td><a href="#">View Homeworks</a></td>
+                <td><a href="/homeworks/{{ student.id }}">View Homeworks</a></td>
                 <td><a href="/student/edit/{{ student.id }}">edit</a> <a href="/student/delete/{{ student.id }}">delete</a></td>
             </tr>
         {% endfor %}

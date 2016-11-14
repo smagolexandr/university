@@ -12,26 +12,29 @@
 </head>
 <body>
 <div class="container">
-    <h1>Geekhub Students</h1>
+    <h1>{{ student.first_name}} {{ student.last_name }}</h1>
     <table class="table table-bordered">
         <tr>
             <th>#</th>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Email name</th>
-            <th>Actions</th>
+            <th>Homework</th>
+            <th>Discipline</th>
+            <th>Done</th>
         </tr>
-        {% for student in students %}
+        {% for homework in homeworks %}
             <tr>
-                <td>{{ student.id }}</td>
-                <td>{{ student.firstName }}</td>
-                <td>{{ student.lastName }}</td>
-                <td>{{ student.email }}</td>
-                <td><a href="/student/edit/{{ student.id }}">edit</a> <a href="/student/delete/{{ student.id }}">delete</a></td>
+                <td>{{ loop.index }}</td>
+                <td>{{ homework.name }}</td>
+                <td>{{ homework.discipline }}</td>
+                <td>
+                    {% if homework.done %}
+                    yes
+                    {% else %}
+                    no
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </table>
-    <a href="/student/add">Add a new student</a>
 </div>
 </body>
 </html>
