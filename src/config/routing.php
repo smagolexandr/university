@@ -5,7 +5,7 @@ use Symfony\Component\Routing\Route;
 
 use Controllers\StudentsController;
 use Controllers\DBController;
-use Controllers\DefaultController;
+use Controllers\HomeworksController;
 use Controllers\UniversitiesController;
 
 $collection = new RouteCollection();
@@ -30,8 +30,8 @@ $collection->add('db_action', new Route('/db', array(
     '_controller' => array (new DBController($connector), 'indexAction'),
 )));
 
-$collection->add('results_show', new Route('/results', array(
-    '_controller' => array (new DefaultController($connector), 'resultsAction'),
+$collection->add('homeworks_show', new Route('/homeworks/{id}', array(
+    '_controller' => array (new HomeworksController($connector), 'indexAction'),
 )));
 
 return $collection;

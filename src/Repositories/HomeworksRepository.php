@@ -1,6 +1,6 @@
 <?php
 namespace Repositories;
-class ResultsRepository implements RepositoryInterface
+class HomeworksRepository implements RepositoryInterface
 {
     private $connector;
     /**
@@ -12,33 +12,45 @@ class ResultsRepository implements RepositoryInterface
     {
         $this->connector = $connector;
     }
-    public function findAll($limit = 100, $offset = 0)
-    {
+
+    public function getStudentInfo($id){
         $statement = $this->connector->getPdo()->prepare('
-            SELECT * FROM results
-            JOIN students ON results.student_id = students.id
-            JOIN courses ON results.course_id = courses.id
-            LIMIT :limit OFFSET :offset
+            SELECT first_name, last_name 
+            FROM students
+            WHERE id = '.$id.'
         ');
-        $statement->bindValue(':limit', (int) $limit, \PDO::PARAM_INT);
-        $statement->bindValue(':offset', (int) $offset, \PDO::PARAM_INT);
         $statement->execute();
-        return $this->fetchResultsData($statement);
+        return $statement->fetch();
     }
-    private function fetchResultsData($statement)
+
+    public function getHomeworks($id){
+        $statement = $this->connector->getPdo()->prepare('
+            SELECT homeworks.done,homeworks.name AS homeworkName ,disciplines.name AS disciplineName
+            FROM homeworks_students
+            JOIN homeworks ON homeworks_students.homework_id = homeworks.id
+            JOIN disciplines ON homeworks.discipline = disciplines.id 
+            WHERE homeworks_students.student_id = '.$id.'
+        ');
+        $statement->execute();
+        return $this->fetchHomeworksData($statement);
+    }
+
+    private function fetchHomeworksData($statement)
     {
         $results = [];
         while ($result = $statement->fetch()) {
             $results[] = [
-                'id' => $result['id'],
-                'firstName' => $result['first_name'],
-                'lastName' => $result['last_name'],
-                'course' => $result['name'],
-                'mark' => $result['mark'],
-                'time' => $result['time_seconds'],
+                'name' => $result['homeworkName'],
+                'discipline' => $result['disciplineName'],
+                'done' => $result['done'],
             ];
         }
         return $results;
+    }
+
+    public function findAll($limit = 100, $offset = 0)
+    {
+
     }
     /**
      * Insert new entity data to the DB
