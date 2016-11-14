@@ -33,7 +33,7 @@ class DBRepository implements RepositoryInterface
         $statement->bindValue(':first_name', $this->faker->firstName);
         $statement->bindValue(':last_name', $this->faker->lastName);
         $statement->bindValue(':email', $this->faker->email);
-        $statement->bindValue(':kafedra', $this->faker->numberBetween($min = 1, $max = 10));
+        $statement->bindValue(':kafedra', $this->faker->numberBetween($min = 1, $max = 30));
         return $statement->execute();
     }
 
@@ -50,7 +50,7 @@ class DBRepository implements RepositoryInterface
     public function UniversityLoad(){
         $statement = $this->connector->getPdo()->prepare('INSERT INTO universities (name,city,url)
                                                           VALUES (:name,:city,:url)');
-        $statement->bindValue(':name', $this->faker->company);
+        $statement->bindValue(':name', $this->faker->unique()->company);
         $statement->bindValue(':city', $this->faker->city);
         $statement->bindValue(':url',  $this->faker->url);
         return $statement->execute();
@@ -68,9 +68,8 @@ class DBRepository implements RepositoryInterface
     public function KafedraLoad(){
         $statement = $this->connector->getPdo()->prepare('INSERT INTO kafedras (name, university)
                                                           VALUES (:name,:university);');
-        $statement->bindValue(':name', $this->faker->word);
-        $statement->bindValue(':university', $this->faker->numberBetween($min = 1, $max = 10));
-        $statement->bindValue(':university', $this->faker->numberBetween($min = 1, $max = 10));
+        $statement->bindValue(':name', $this->faker->unique()->word);
+        $statement->bindValue(':university', $this->faker->numberBetween($min = 1, $max = 30));
         return $statement->execute();
     }
 
@@ -89,10 +88,9 @@ class DBRepository implements RepositoryInterface
                                                           VALUES (:first_name,:last_name,:kafedra);');
         $statement->bindValue(':first_name', $this->faker->firstName);
         $statement->bindValue(':last_name', $this->faker->lastName);
-        $statement->bindValue(':kafedra', $this->faker->numberBetween($min = 1, $max = 10));
+        $statement->bindValue(':kafedra', $this->faker->numberBetween($min = 1, $max = 30));
         return $statement->execute();
     }
-
     public function DisciplinesCreate(){
         $statement = $this->connector->getPdo()->prepare('CREATE TABLE disciplines (
                                                           id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -105,10 +103,30 @@ class DBRepository implements RepositoryInterface
     public function DisciplineLoad(){
         $statement = $this->connector->getPdo()->prepare('INSERT INTO disciplines (name,kafedra)
                                                           VALUES (:name,:kafedra);');
-        $statement->bindValue(':name', $this->faker->word);
-        $statement->bindValue(':kafedra', $this->faker->numberBetween($min = 1, $max = 10));
+        $statement->bindValue(':name', $this->faker->unique()->word);
+        $statement->bindValue(':kafedra', $this->faker->numberBetween($min = 1, $max = 30));
         return $statement->execute();
     }
+
+    public function TeachersDisciplinesCreate(){
+        $statement = $this->connector->getPdo()->prepare('CREATE TABLE teachers_disciplines (
+                                                          teachers_id INT NOT NULL ,
+                                                          disciplines_id INT NOT NULL ,
+                                                          PRIMARY KEY (teachers_id, disciplines_id), 
+                                                          FOREIGN KEY (teachers_id) REFERENCES teachers(id) ON UPDATE CASCADE,
+                                                          FOREIGN KEY (disciplines_id) REFERENCES disciplines(id) ON UPDATE CASCADE
+                                                        ) ENGINE=INNODB charset=utf8;');
+        return $statement->execute();
+    }
+
+    public function TeacherDisciplineLoad(){
+        $statement = $this->connector->getPdo()->prepare('INSERT INTO teachers_disciplines (teachers_id,disciplines_id)
+                                                          VALUES (:name,:kafedra);');
+        $statement->bindValue(':teachers_id', $this->faker->numberBetween($min = 1, $max = 30));
+        $statement->bindValue(':disciplines_id', $this->faker->numberBetween($min = 1, $max = 30));
+        return $statement->execute();
+    }
+
 
     public function HomeworksCreate(){
         $statement = $this->connector->getPdo()->prepare('CREATE TABLE homeworks (
@@ -123,8 +141,8 @@ class DBRepository implements RepositoryInterface
     public function HomeworkLoad(){
         $statement = $this->connector->getPdo()->prepare('INSERT INTO homeworks (name,discipline,done)
                                                           VALUES (:name,:discipline,:done);');
-        $statement->bindValue(':name', $this->faker->word);
-        $statement->bindValue(':discipline', $this->faker->numberBetween($min = 1, $max = 10));
+        $statement->bindValue(':name', $this->faker->unique()->word);
+        $statement->bindValue(':discipline', $this->faker->numberBetween($min = 1, $max = 30));
         $statement->bindValue(':done', $this->faker->boolean);
         return $statement->execute();
     }
@@ -132,7 +150,10 @@ class DBRepository implements RepositoryInterface
     public function HomeworksStudentsCreate(){
         $statement = $this->connector->getPdo()->prepare('CREATE TABLE homeworks_students (
                                                           homework_id INT NOT NULL,
-                                                          student_id INT NOT NULL
+                                                          student_id INT NOT NULL,
+                                                          PRIMARY KEY (homework_id, student_id), 
+                                                          FOREIGN KEY (homework_id) REFERENCES homeworks(id) ON UPDATE CASCADE,
+                                                          FOREIGN KEY (student_id) REFERENCES students(id) ON UPDATE CASCADE
                                                         ) ENGINE=INNODB charset=utf8;');
         return $statement->execute();
     }
@@ -140,8 +161,8 @@ class DBRepository implements RepositoryInterface
     public function HomeworkStudentLoad(){
         $statement = $this->connector->getPdo()->prepare('INSERT INTO homeworks_students (homework_id,student_id)
                                                           VALUES (:homework_id,:student_id);');
-        $statement->bindValue(':homework_id', $this->faker->numberBetween($min = 1, $max = 10));
-        $statement->bindValue(':student_id', $this->faker->numberBetween($min = 1, $max = 10));
+        $statement->bindValue(':homework_id', $this->faker->numberBetween($min = 1, $max = 30));
+        $statement->bindValue(':student_id',  $this->faker->numberBetween($min = 1, $max = 30));
         return $statement->execute();
     }
 
